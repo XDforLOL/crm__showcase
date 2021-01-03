@@ -1,0 +1,108 @@
+{% extends 'crm_retail/main.html' %}
+
+{% block content %}
+<div class="container-fluid">
+<br>
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center text-white mb-3" id="total-orders">
+                    <div class="card-header">
+                        <h5 class="card-title">Total Orders</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{total_orders}}</h3>
+                    </div>
+                </div>
+        </div>
+        </div>
+        <div class="col">
+            <div class="col-md">
+              <div class="card text-center text-white mb-3" id="orders-pending">
+                    <div class="card-header">
+                        <h5 class="card-title">Orders delivered</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{orders_delivered}}</h3>
+                    </div>
+              </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="col-md">
+              <div class="card text-center text-white mb-3" id="orders-delivered">
+                    <div class="card-header">
+                        <h5 class="card-title">Orders pending</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="card-title">{{orders_pending}}</h3>
+                    </div>
+                </div>
+        </div>
+        </div>
+    </div>
+    <div class="row justify-content-around">
+        <div calss="col-md-6">
+            <h5>COSTUMERS</h5>
+            <hr>
+            <div class="card card-body px-5">
+                <a class="btn btn-primary btn-sm btn-block" href="">
+                    Create costumers
+                </a>
+                <table class="table">
+
+                    <tr>
+                        <th>Costumer</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Orders</th>
+                    </tr>
+
+                    {% for customer in customers %}
+                    <tr>
+                        <td>
+                            {{customer.customer_id}}
+                        </td>
+                        <td>
+                            {{customer.first_name}}
+                        </td>
+                        <td>
+                            {{customer.last_name}}
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-info" href="{% url 'customers' customer.customer_id %}">view</a>
+                        </td>
+                        <td>
+                            {{customer.created_on}}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </table>
+            </div>
+        </div>
+        <div calss="col-md-6">
+            <h5>LAST 5 ORDERS</h5>
+            <hr>
+            <div class="card card-body px-5">
+                <table class="table">
+                    <th>Order #</th>
+                    <th>Status</th>
+                    <th>time of order</th>
+                    <th>Update</th>
+                    <th>Remove</th>
+                    {% for order in sales.all %}
+                    <tr>
+                        <td>{{order.sale_id}}</td>
+                        <td>{{order.status}}</td>
+                        <td>{{order.time_of_order}}</td>
+                        <td><a class="btn btn-sm btn-info" href="{% url 'update_sale' order.sale_id %}">Update</a></td>
+                        <td><a class="btn btn-sm btn-danger" href="{% url 'delete_sale' order.sale_id %}">Remove</a></td>
+                    </tr>
+                    {% endfor%}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

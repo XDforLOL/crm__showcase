@@ -1,0 +1,44 @@
+{% load static %}
+
+<script src="{% static 'javascript/bootstrap.min.js' %}"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="{% static '/css/login-page.css' %}">
+
+<div class="container-fluid bg-dark p-5" style="height:100vh;">
+    <div class="d-flex mt-5 justify-content-center">
+        <div class="card text-center" id="login-reg-card">
+            <div class="card-header text-white">
+                Featured
+            </div>
+            <div class="card-body">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="group">
+                        <label for="username">Username</label>
+                        <input type="username" class="form-control" name="username" id="username" placeholder="Username">
+                    </div>
+                    <div class="group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" name="password" id="password"
+                               placeholder="Password">
+                    </div>
+                    <div class="form-row center">
+                        <div class="col">
+                            <span><h6>Dont have have an account?<a
+                                    href="{% url 'register' %}"> Register here</a></h6></span>
+                        </div>
+                    </div>
+                    {% for message in  messages %}
+                            <p>{{message}}</p>
+                    {% endfor %}
+                    <button type="submit" class="btn text-white">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

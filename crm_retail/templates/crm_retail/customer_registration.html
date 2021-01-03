@@ -1,0 +1,62 @@
+{% load static %}
+
+<script src="{% static 'javascript/bootstrap.min.js' %}"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="{% static '/css/login-page.css' %}">
+
+<div id="login" class="container-fluid bg-dark p-5" style="height:100vh;">
+    <div class="d-flex mt-5 justify-content-center">
+        <div class="card" id="login-reg-card">
+            <div class="card-header text-white">
+                Registration
+            </div>
+            <div class="card-body mb-2" style="padding-left:30px;padding-right:30px">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="justify-content-center">
+                    <div class="row-inline-p-5">
+                        <div class="col">{{form.username.label}}</div>
+                        <div class="col">{{form.username}}</div>
+                    </div>
+                    <div class="row-inline-p-5">
+                        <div class="col">{{form.first_name.label}}</div>
+                        <div class="col">{{form.first_name}}</div>
+                    </div>
+                    <div class="row-inline-p-5">
+                        <div class="col">{{form.last_name.label}}</div>
+                        <div class="col">{{form.last_name}}</div>
+                    </div>
+                    <div class="row-inline-p-5">
+                        <div class="col">{{form.email.label}}</div>
+                        <div class="col">{{form.email}}</div>
+                    </div>
+                    <div class="row-inline-p-5">
+                        <div class="col">{{form.password1.label}}</div>
+                        <div class="col">{{form.password1}}</div>
+                    </div>
+                    <div class="row-inline-p-5">
+                        <div class="col">{{form.password2.label}}</div>
+                        <div class="col">{{form.password2}}</div>
+                    </div>
+                    <div class="row-inline-p-5" style="float: left">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">I agree to the terms of service</label>
+                    </div>
+                    <br>
+                    </div>
+                    <div class="row-inline">
+                        <div class="col">
+                            <span><h6>Already have an account?<a href="{% url 'login' %}"> login</a></h6></span>
+                            </div>
+                    </div>
+                    <button type="submit" class="btn text-white" >Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

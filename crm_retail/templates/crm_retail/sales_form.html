@@ -1,0 +1,30 @@
+{% extends 'crm_retail/main.html' %}
+{% load static %}
+{% block content %}
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="card-content">{{sales_form.sale_id}}{{sales_form.customer_id}}{{sales_form.status}}</div>
+    {{sale_detail_form_set.management_form}}
+    <div id="form_set">
+        {% for form in sale_detail_form_set.forms %}
+        <table class='no_error'>
+            {{ form.as_table }}
+        </table>
+        {% endfor %}
+    </div>
+    <input type="button" value="Add More" id="add_more">
+    <div id="empty_form" style="display:none">
+        <table class='no_error'>
+            {{ sale_detail_form_set.empty_form}}
+        </table>
+    </div>
+    <script>
+    $('#add_more').click(function() {
+        const form_idx = $('#id_form-TOTAL_FORMS').val();
+        $('#form_set').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+    </script>
+    <input type="submit" name="submit">
+</form>
+{% endblock %}

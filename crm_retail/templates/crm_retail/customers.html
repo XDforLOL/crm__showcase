@@ -1,0 +1,107 @@
+{% extends 'crm_retail/main.html' %}
+
+{% block content %}
+
+<br>
+<div class="row">
+    <div class="col-md">
+        <div class="card card-body">
+            <h5>Costumer: {{customer.first_name}} {{customer.last_name}}</h5>
+            <hr>
+            <a class="btn btn-outline-info btn-sm btn-block" href="">
+                Update Costumer
+            </a>
+            <a class="btn btn-outline-danger btn-sm btn-block " href="{% url 'create_sale' customer.customer_id %}">
+                Place Order
+            </a>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="card card-body">
+            <h5>Contact Information</h5>
+            <hr>
+            <p>Email: {{customer.mail}}</p>
+            <p>Phone: {{customer.phone_number}}</p>
+        </div>
+    </div>
+    <div class="col-md">
+        <div class="card card-body">
+            <h5>Total Orders</h5>
+            <hr>
+            <h1 style="text-align: center;padding: 10px">{{sales_count}}</h1>
+        </div>
+
+    </div>
+
+</div>
+<br>
+<div class="row">
+    <div class="col">
+        <div class="card card-body">
+            <form method="get">
+                <button class="btn btn-primary" type="submit">
+                    Search
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col">
+        <div class="card card-body">
+            <form method="get">
+                {{my_filter.form}}
+                <button class="btn btn-primary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md">
+        <tr class="card card-body">
+            <table class="table table-sm">
+                <tr>
+                    <th>Order #</th>
+                    <th>Time Of order</th>
+                    <th>Status</th>
+                    <th>Sale Details</th>
+                </tr>
+                {% for sale in sales %}
+                <tr>
+                    <th>
+                        {{sale.sale_id}}
+                    </th>
+                    <th>
+                        {{sale.time_of_order}}
+                    </th>
+                    <th>
+                        {{sale.status}}
+                    </th>
+                    {% for current_sale, sale_detail in current_customer_sale_detail.items %}
+                    {% if sale == current_sale%}
+                    <th>
+                        <button calss="btn btn-primary" data-toggle="collapse"
+                                data-target="#collapse{{current_sale}}" aria-expanded="false">
+                            Expand Details of sale #{{current_sale}}
+                        </button>
+                        <card class="card card-body collapse" id="collapse{{current_sale}}">
+                            {% for detail in sale_detail %}
+                            <p>{{detail}}</p>
+                            {% endfor %}
+                        </card>
+                    </th>
+                    <td><a class="btn btn-sm btn-info" href="{% url 'update_sale' sale.sale_id %}">Update</a></td>
+                    <td><a class="btn btn-sm btn-danger" href="{% url 'delete_sale' sale.sale_id %}">Remove</a></td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+
+            </table>
+    </div>
+</div>
+</div>
+
+{% endblock %}
