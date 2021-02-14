@@ -1,4 +1,4 @@
-#!C:\Users\ARTuR\PycharmProjects\django_retail_crm\Scripts\python.exe
+#!C:\Users\ARTuR\PycharmProjects\crm__showcase\Scripts\python.exe
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 

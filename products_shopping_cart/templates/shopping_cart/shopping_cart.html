@@ -1,0 +1,76 @@
+
+<!------ Include the above in your HEAD tag ---------->
+
+{#<div class="modal fade" id="shopping-cart" tabindex="-1" role="dialog" aria-labelledby="shopping-cart" aria-hidden="true">#}
+<div class="card">
+    <div class="card-header">Your shopping cart</div>
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="pull-left">Product</th>
+                        <th>Quantity</th>
+                        <th class="text-center" style="clear: both;display: inline-block;overflow: hidden;white-space: nowrap;">Unit price</th>
+                        <th class="text-center">Total Price</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                      {% for item in cart %}
+                      {% with product=item.product %}
+                    <tr>
+                        <td class="col-sm-8 col-md-6">
+                        <div class="media">
+                            <a class="thumbnail pull-left" href="{{ product.get_absolute_url }}"> <img class="media-object" src="{% static "media/og_stock_phone.png" %}" style="width: 72px; height: 72px;"> </a>
+                            <div class="media-body">
+                                <h4 class="media-heading" > <a>{{product.product_name}}</a></h4>
+                                <h5 class="media-heading"> by <a href="#">{{ product.maker }}</a></h5>
+                                <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                            </div>
+                        </div>
+                        </td>
+                        <td class="col-sm-1 col-md-1" style="text-align: center">
+                            <form action="{% url "cart:cart_add" product.pk %}" method="post">
+                                {{ item.update_quantity_form.quantity }}
+                                {{ item.update_quantity_form.update }}
+                            <input type="submit" value="Update">
+                            {% csrf_token %}
+                                </form>
+                        </td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>${{ item.price }}</strong></td>
+                        <td class="col-sm-1 col-md-1 text-center"><strong>${{ item.total_price }}</strong></td>
+                        <td class="col-sm-1 col-md-1">
+                        <button type="button" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove"></span> Remove
+                        </button>
+                        </td>
+                    </tr>
+                      {% endwith %}
+                      {% endfor %}
+                    <tr>
+                        <td>   </td>
+                        <td>   </td>
+                        <td>   </td>
+                        <td><h3>Total</h3></td>
+                        <td class="text-right"><h3><strong>${{ cart.get_total_price }}</strong></h3></td>
+                    </tr>
+                    <tr>
+                        <td>   </td>
+                        <td>   </td>
+                        <td>   </td>
+                        <td>
+                        <a class="btn btn-primary" style="clear: both;display: inline-block;overflow: hidden;white-space: nowrap;" type="button" href="{% url "cart:products" %}" class="button light">Continue shopping</a>
+                        </td>
+                        <td>
+                        <button type="button" class="btn btn-success" href="#" >Checkout
+                            <span class="glyphicon glyphicon-play"></span>
+                        </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{#</div>#}

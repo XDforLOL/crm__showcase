@@ -1,38 +1,96 @@
 <style>
-  .hello-msg{
-    font-size: 20px;
-    color: #ffffff;
-    margin-right: 20px;
-}
+    .hello-msg {
+        font-size: 20px;
+        color: #ffffff;
+        margin-right: 20px;
+    }
 </style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#"></a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-        {% if request.user.is_staff %}
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'main' %}">Dashboard <span class="sr-only">(current)</span></a>
-      </li>
-        {% endif %}
-      <li class="nav-item">
-        <a class="nav-link text-white" href="{% url 'products' %}">Products</a>
-      <li class="nav-item">
-        <div class="dropdown">
-        <a class="btn dropdown-toggle text-white" role="button" href="{% url 'profile' %}"id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
+    <a class="navbar-brand" href="#"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            {% if request.user.is_staff %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'main' %}">Dashboard <span class="sr-only">(current)</span></a>
+                </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'cart:products' %}">Products</a>
+            </li>
+            <li class="nav-item">
+
+                <a type="button" href="{% url 'cart:cart_detail' %}" class="btn btn-primary">
+                    Shopping cart
+                </a>
+
+            </li>
+        </ul>
+    </div>
+    <span class="hello-msg">Hello, {{ request.user }}</span>
+    <span>
+        <div class="hello-msg dropdown">
+        <a class="btn dropdown-toggle text-white" role="button" href="{% url 'profile' %}" id="dropdownMenuLink"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="{% url 'profile' %}">Profile Page</a>
                 <a class="dropdown-item" href="{% url 'profile_settings' %}">Profile Settings</a>
             </div>
         </div>
-      </li>
-    </ul>
-  </div>
-  <span class="hello-msg">Hello, {{request.user}}</span>
-  <span class="hello-msg">
+</span>
+    <span class="hello-msg">
       <a href="{% url 'logout' %}" style="color: white">Logout</a>
   </span>
-</div>
+    </div>
 </nav>
+
+
+
+
+
+
+
+
+<script>
+    $(document).ready(function(){
+
+ // Add new element
+ $(".add").click(function(){
+
+  // Finding total number of elements added
+  let total_element = $(".element").length;
+
+  // last <div> with element class id
+  var lastid = $(".element:last").attr("id");
+  var split_id = lastid.split("_");
+  let nextindex = Number(split_id[1]) + 1;
+
+  const max = 5;
+  // Check total number elements
+  if(total_element < max ){
+   // Adding new div container after last occurance of element class
+   $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
+
+   // Adding element to <div>
+   $("#div_" + nextindex).append("<input type='text' placeholder='Enter your skill' id='txt_"+ nextindex +"'>&nbsp;<span id='remove_" + nextindex + "' class='remove'>X</span>");
+
+  }
+
+ });
+
+ // Remove element
+ $('.container').on('click','.remove',function(){
+
+  const id = this.id;
+  let split_id = id.split("_");
+  let deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ });
+});
+</script>

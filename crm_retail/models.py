@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.query import QuerySet
 from django.conf import settings
 # Create your models here.
+from products_shopping_cart.models import Products
 
 
 class Customers(models.Model):
@@ -21,23 +22,6 @@ class Customers(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-
-class Products(models.Model):
-    product_id = models.IntegerField(primary_key=True, null=False)
-    product_name = models.CharField(max_length=50, blank=True, null=True)
-    model = models.CharField(max_length=50, blank=True, null=True)
-    maker = models.CharField(max_length=255, blank=True, null=True)
-    stock = models.IntegerField(blank=True, null=True)
-    price = models.FloatField(blank=True, null=True)
-    created_on = models.DateTimeField('created_on', auto_now_add=True)
-
-    class Meta:
-        managed = True
-        db_table = 'products'
-
-    def __str__(self):
-        return f"{self.product_name}"
 
 
 class Sales(models.Model):

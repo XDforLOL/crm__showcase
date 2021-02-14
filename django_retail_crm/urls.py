@@ -15,8 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('crm_retail.urls'))
+    path('', include('crm_retail.urls')),
+    # path('shop/', include('products_shopping_cart.urls'), name='products'),
+    url(r'^cart/', include(('products_shopping_cart.urls', 'products_shopping_cart'), namespace='cart')),
 ]

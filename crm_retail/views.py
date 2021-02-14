@@ -1,3 +1,5 @@
+from django.core.exceptions import FieldDoesNotExist
+import logging
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
 from django.forms import modelformset_factory
@@ -9,6 +11,7 @@ from .models import *
 from .forms import SalesForm, CreateUserForm, CustomerForm
 from .filters import SalesFilter
 from .decorators import unauthorized_user, allowed_users, admin_only
+logging.basicConfig(handlers=[logging.FileHandler('example.log', 'w', 'utf-8')])
 
 
 @login_required(login_url='login')
@@ -31,29 +34,28 @@ def home(request: HttpRequest) -> HttpResponse:
 
 @unauthorized_user
 def register_page(request: HttpRequest) -> HttpResponse:
-    pk_last_customer = getattr(Customers.objects.latest('customer_id'), 'pk') + 1
+    errors_txt = ''
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         # TODO Create Logger
         print(form.errors)
+        errors_txt = form.errors
 
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-
             group = Group.objects.get(name='customer')
             user.groups.add(group)
             Customers.objects.create(
-                customer_id=pk_last_customer,
+                customer_id=get_id(Customers, 'customer_id'),
                 user=user, first_name=user.first_name,
                 last_name=user.last_name, mail=user.email,
             )
-
             messages.success(request, f'Account was created for {username}')
             return redirect('login')
     else:
         form = CreateUserForm()
-    return render(request, 'crm_retail/customer_registration.html', {'form': form})
+    return render(request, 'crm_retail/customer_registration.html', {'form': form, 'error_txt': errors_txt})
 
 
 @unauthorized_user
@@ -83,7 +85,7 @@ def logout_page(request: HttpRequest) -> HttpResponse:
 @allowed_users(allowed_roles=['customer'])
 def customer_profile(request: HttpRequest) -> HttpResponse:
     user_customer_orders = request.user.customers.sales_set.all()
-    print(f'ORDERS: {user_customer_orders}')
+    logging.info(f'ORDERS: {user_customer_orders}')
     return render(request,
                   'crm_retail/customer_profile.html',
                   {'user_customer_orders': user_customer_orders,
@@ -126,14 +128,10 @@ def customers(request: HttpRequest, customer_id: str) -> HttpResponse:
                    })
 
 
-def products(request: HttpRequest) -> HttpResponse:
-    return render(request, 'crm_retail/products.html', {'products': Products.objects.all()})
-
-
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['admin'])
 def create_sale(request: HttpRequest, customer_id: str) -> HttpResponse:
-    latest_sale_id = getattr(Sales.objects.latest('sale_id'), 'pk') + 1
+    latest_sale_id = get_id(Sales, 'sale_id')
     sales_form = SalesForm(initial={
         'sale_id': latest_sale_id, 'customer_id': customer_id})
 
@@ -141,8 +139,11 @@ def create_sale(request: HttpRequest, customer_id: str) -> HttpResponse:
     sales_form.fields['customer_id'].disabled = True
 
     sale_details_form_set = modelformset_factory(
-        SaleDetails, fields=('product', 'quantity'), can_delete=True, extra=1, max_num=10)
+        SaleDetails, fields=('product', 'quantity'),
+        can_delete=True, extra=1, max_num=10
+    )
     sale_detail_form_set = sale_details_form_set(queryset=SaleDetails.objects.none())
+
     if request.method == 'POST':
         POST = request.POST.copy()
         POST['customer_id'] = customer_id
@@ -158,8 +159,7 @@ def create_sale(request: HttpRequest, customer_id: str) -> HttpResponse:
 
             for form in detail_form:
                 form.sale_id = latest_sale_id
-                form.sale_detail = (getattr(
-                    SaleDetails.objects.latest('sale_detail'), 'pk') + 1)
+                form.sale_detail = get_id(SaleDetails, 'sale_detail')
                 form.save()
             return redirect('/')
 
@@ -198,8 +198,7 @@ def update_sale(request: HttpRequest, sale_id: str) -> HttpResponse:
             for form in detail_form:
                 form.instance = sale_details_id
                 form.sale_id = sale_id
-                form.sale_detail = (getattr(
-                    SaleDetails.objects.latest('sale_detail'), 'pk') + 1)
+                form.sale_detail = get_id(SaleDetails, 'sale_detail')
                 form.save()
             return redirect('/')
     else:
@@ -222,3 +221,25 @@ def delete_sale(request: HttpRequest, sale_id: str) -> HttpResponse:
         return redirect('/')
     return render(
         request, 'crm_retail/delete.html', {'item': sale_id})
+
+
+def get_id(model: models, table: str) -> str:
+    """
+    model = what model to query
+    table = Tables Name
+    return 1 if none is in DB or latest if populated
+    """
+    try:
+        latest_id_or_1 = (getattr(model.objects.latest(f'{table}'), 'pk') + 1)
+        logging.info(f'{model} 1 was added to ID')
+        return latest_id_or_1
+
+    except model.DoesNotExist:
+        logging.error(f'{model}: {model.DoesNotExist}')
+        latest_id_or_1 = '1'
+        logging.info(f'{model} ID 1 was created')
+        return latest_id_or_1
+
+    except Exception as e:
+        logging.error(e.message)
+
