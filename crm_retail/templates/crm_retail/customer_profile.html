@@ -1,88 +1,125 @@
 {% extends 'crm_retail/main.html' %}
 {% load static %}
 {% block content %}
-<div class="container-fluid">
-<br>
-{#TODO Myorders div Header#}
-    <div class="row">
-        <div class="col">
-            <div class="col-md">
-                <div class="card text-center text-white mb-3" id="total-orders">
-                    <div class="card-header">
-                        <h5 class="card-title">Pending</h5>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">{{ orders_pending }}</h3>
+    <div class="container-fluid">
+        <br>
+        {#TODO Myorders div Header#}
+        <div class="row">
+            <div class="col">
+                <div class="col-md">
+                    <div class="card text-center text-white mb-3" id="total-orders">
+                        <div class="card-header">
+                            <h5 class="card-title">Pending</h5>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">{{ orders_pending }}</h3>
+                        </div>
                     </div>
                 </div>
-        </div>
-        </div>
-        <div class="col">
-            <div class="col-md">
-              <div class="card text-center text-white mb-3" id="orders-pending">
-                    <div class="card-header">
-                        <h5 class="card-title">Out for delivery</h5>
+            </div>
+            <div class="col">
+                <div class="col-md">
+                    <div class="card text-center text-white mb-3" id="orders-pending">
+                        <div class="card-header">
+                            <h5 class="card-title">Out for delivery</h5>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">{{ orders_delivering }}</h3>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <h3 class="card-title">{{ orders_delivering }}</h3>
+                </div>
+            </div>
+            <div class="col">
+                <div class="col-md">
+                    <div class="card text-center text-white mb-3" id="orders-delivered">
+                        <div class="card-header">
+                            <h5 class="card-title">Delivered</h5>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">{{ orders_delivered }}</h3>
+                        </div>
                     </div>
-              </div>
+                </div>
             </div>
         </div>
-        <div class="col">
+        <div class="row">
             <div class="col-md">
-              <div class="card text-center text-white mb-3" id="orders-delivered">
-                    <div class="card-header">
-                        <h5 class="card-title">Delivered</h5>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">{{ orders_delivered }}</h3>
-                    </div>
-                </div>
-        </div>
-        </div>
-    </div>
-<div class="row">
-    <div class="col-md">
-        <tr class="card card-body">
-            <table class="table table-sm">
-                <tr>
-                    <th>Order #</th>
-                    <th>Time Of order</th>
-                    <th>Status</th>
-                    <th>Sale Details</th>
-                </tr>
-                {% for order in user_customer_orders %}
-                <tr>
-                    <th>
-                        {{order.sale_id}}
-                    </th>
-                    <th>
-                        {{order.time_of_order}}
-                    </th>
-                    <th>
-                        {{order.status}}
-                    </th>
-                    {% for current_sale, sale_detail in current_customer_sale_detail.items %}
-                    {% if sale == current_sale%}
-                    <th>
-                        <button calss="btn btn-primary" data-toggle="collapse"
-                                data-target="#collapse{{current_sale}}" aria-expanded="false">
-                            Expand Details of sale #{{current_sale}}
-                        </button>
-                        <card class="card card-body collapse" id="collapse{{current_sale}}">
-                            {% for detail in sale_detail %}
-                            <p>{{detail}}</p>
-                            {% endfor %}
-                        </card>
-                    </th>
-                    {% endif %}
-                    {% endfor %}
-                </tr>
-                {% endfor %}
+                <tr class="card card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <th>Order #</th>
+                            <th>Time Of order</th>
+                            <th>Status</th>
+                            <th>Sale Details</th>
+                        </tr>
+                        {% for order in user_customer_orders %}
+                            <tr>
+                                <th>
+                                    {{ order.sale_id }}
+                                </th>
+                                <th>
+                                    {{ order.time_of_order }}
+                                </th>
+                                <th>
+                                    {{ order.status }}
+                                </th>
+                                {% for current_sale, sale_detail in current_customer_sale_detail.items %}
+                                    {% if order == current_sale %}
+                                        <th>
+                                            <button calss="btn text-white" data-toggle="collapse"
+                                                    data-target="#collapse{{ current_sale }}" aria-expanded="false" style="background-color: #427EE3; border-radius: 5px;color: white">
+                                                Expand Details of Order #{{ current_sale }}
+                                            </button>
+                                            <card class="card card-body collapse" id="collapse{{ current_sale }}">
+                                                <div class="table-responsive-sm">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Order</th>
+                                                            <th>Product</th>
+                                                            <th>Quantity</th>
+                                                            <th>Ordered On</th>
+                                                        </tr>
+                                                        </thead>
+                                                        {% for detail in sale_detail %}
 
-            </table>
+
+                                                            <tbody>
+                                                            <tr>
+                                                                <th>{{ detail.sale }}</th>
+                                                                <th>{{ detail.product }}</th>
+                                                                <th>{{ detail.quantity }}</th>
+                                                                <th>{{ detail.created_on }}</th>
+                                                            </tr>
+                                                            </tbody>
+
+
+                                                        {% endfor %}
+                                                    </table>
+                                                </div>
+                                            </card>
+                                        </th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+            </div>
+        </div>
     </div>
-</div>
-</div>
+    <style>
+
+        #total-orders {
+            background-color: #427EE3
+        }
+
+        #orders-pending {
+            background-color: #75961d
+        }
+
+        #orders-delivered {
+            background-color: #E65139
+        }
+    </style>
 {% endblock %}

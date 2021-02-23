@@ -15,7 +15,7 @@ class CustomerForm(ModelForm):
 class SalesForm(ModelForm):
     class Meta:
         model = Sales
-        fields = ['sale_id', 'customer_id', 'status']
+        fields = ['sale_id', 'customer_id', 'time_of_order', 'status']
 
 
 class SaleDetailsForm(ModelForm):

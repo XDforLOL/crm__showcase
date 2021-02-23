@@ -1,73 +1,60 @@
 import psycopg2
-
 from .models import Products
 from datetime import datetime
 from django_retail_crm.secret_key import host, psql_key
-from django.forms import modelformset_factory
-from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest
 from crm_retail.views import get_id
 from crm_retail.models import Sales, SaleDetails
-from crm_retail.forms import SalesForm, SaleDetailsForm
-from crm_retail.decorators import unauthorized_user, allowed_users, admin_only
-from django.contrib.auth.decorators import login_required
+from crm_retail.forms import SalesForm
 from django.views.decorators.http import require_POST
 from .cart import Cart
 from .cart_form import CartAddProductForm
 
 
-
-
 @require_POST
-def cart_add(request, product_id):
+def cart_add(request: HttpRequest, product_id: int) -> HttpResponse:
     cart = Cart(request)
     product = get_object_or_404(Products, product_id=product_id)
     form = CartAddProductForm(request.POST)
 
     if form.is_valid():
         cd = form.cleaned_data
-        cart.add(product=product,
-                 quantity=cd['quantity'],
-                 update_quantity=cd['update'])
+        cart.add_product_to_cart(product=product,
+                                 quantity=cd['quantity'],
+                                 update_quantity=cd['update'])
     return redirect('cart:cart_detail')
 
 
-def cart_remove(request: HttpRequest, product_id: str):
+def cart_remove(request: HttpRequest, product_id: str) -> HttpResponse:
     cart = Cart(request)
     product = get_object_or_404(Products, product_id=product_id)
-    cart.remove(product)
+    cart.remove_product_from_cart(product)
     return redirect('cart:cart_detail')
 
 
-def product_detail(request: HttpRequest, id: str, slug):
-    product = get_object_or_404(Products, product_id=id,
-                                slug=slug,
-                                available=True)
-
-    cart_product_form = CartAddProductForm()
-
-    return render(request,
-                  'shopping_cart/products/product_detail.html',
-                  {
-                      'product': product,
-                      'cart_product_form': cart_product_form
-                  })
-
-
-def cart_detail(request: HttpRequest):
+def cart_detail(request: HttpRequest) -> HttpResponse:
     cart = Cart(request)
     for item in cart:
         item['update_quantity_form'] = CartAddProductForm(
             initial={'quantity': item['quantity'],
                      'update': True})
-    return render(request, 'shopping_cart/cart/detail.html', {'cart': cart})
+    return render(request, 'shopping_cart/cart/detail.html', {
+        'cart': cart,
+        'total_cart': [sum(i['quantity'] for i in Cart(request).cart.values())][0]
+    })
 
 
 def products(request: HttpRequest) -> HttpResponse:
     return render(request, 'shopping_cart/products/products.html',
                   {'products': Products.objects.all(),
-                   'cart_product_form': CartAddProductForm()})
+                   'cart_product_form': CartAddProductForm(),
+                   'total_cart': [sum(i['quantity'] for i in Cart(request).cart.values())][0]
+                   })
+
+
+def products_detail(request) -> HttpResponse:
+    return render(request, 'shopping_cart/products/product_detail.html', {'products': Products.objects.all()})
 
 
 def check_out(request: HttpRequest) -> HttpResponse:
@@ -80,10 +67,11 @@ def check_out(request: HttpRequest) -> HttpResponse:
         cur = conn.cursor()
 
         sale_id = get_id(Sales, 'sale_id')
-        customer_id = request.user.id
+        customer_id = request.user.customers.pk
         sales_form = SalesForm(data={
             'sale_id': sale_id,
             'customer_id': customer_id,
+            'time_of_order': datetime.now().strftime("%m/%d/%Y, %H:%M:%S"),
             'status': 'Pending'
         })
         if sales_form.is_valid():
@@ -101,9 +89,8 @@ def check_out(request: HttpRequest) -> HttpResponse:
             cur.execute(query)
             conn.commit()
             print(query)
-    del Cart(request).cart
-    context = {}
-    return render(request, 'shopping_cart/cart/checkout.html', {'context': context})
+            Cart(request).clear()
+    return redirect('cart:cart_detail')
 
 # TODO finish checkout register sales properly
 # TODO when registering a new a account fix check button

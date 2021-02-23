@@ -26,6 +26,8 @@ def allowed_users(allowed_roles: str = []):
             else:
                 if group == 'customer':
                     return redirect('profile')
+                if group == 'admin':
+                    return redirect('main')
                 else:
                     return HttpResponse('You are not authorized to view this page')
         return wrapper_func

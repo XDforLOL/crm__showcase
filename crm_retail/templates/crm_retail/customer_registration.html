@@ -44,8 +44,8 @@
                         <div class="col">{{form.password2}}</div>
                     </div>
                     <div class="row-inline-p-5" style="float: left">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">I agree to the terms of service</label>
+                        <input type="checkbox" class="form-check-input" id="check">
+                        <label class="form-check-label" for="check">I agree to the terms of service</label>
                     </div>
                     <br>
                     </div>
@@ -55,9 +55,15 @@
                             </div>
                     </div>
                     <div style="color: red">{{ error_txt }}</div>
-                    <button type="submit" class="btn text-white" >Submit</button>
+                    <button id="btncheck" type="submit" class="btn text-white" >Submit</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    $('#check').change(function () {
+    $('#btncheck').prop("disabled", !this.checked);
+});
+</script>

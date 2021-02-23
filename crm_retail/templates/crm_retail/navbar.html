@@ -1,3 +1,4 @@
+
 <style>
     .hello-msg {
         font-size: 20px;
@@ -5,7 +6,8 @@
         margin-right: 20px;
     }
 </style>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="">
     <a class="navbar-brand" href="#"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,8 +25,8 @@
             </li>
             <li class="nav-item">
 
-                <a type="button" href="{% url 'cart:cart_detail' %}" class="btn btn-primary">
-                    Shopping cart
+                <a type="button" href="{% url 'cart:cart_detail' %}" class="nav-link btn text-white" style="background-color: #75961d">
+                    Shopping cart: {{ total_cart }}
                 </a>
 
             </li>
@@ -32,6 +34,7 @@
     </div>
     <span class="hello-msg">Hello, {{ request.user }}</span>
     <span>
+        {% if not request.user.is_staff%}
         <div class="hello-msg dropdown">
         <a class="btn dropdown-toggle text-white" role="button" href="{% url 'profile' %}" id="dropdownMenuLink"
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Profile</a>
@@ -40,12 +43,15 @@
                 <a class="dropdown-item" href="{% url 'profile_settings' %}">Profile Settings</a>
             </div>
         </div>
+        {% endif %}
 </span>
     <span class="hello-msg">
       <a href="{% url 'logout' %}" style="color: white">Logout</a>
   </span>
     </div>
 </nav>
+
+
 
 
 

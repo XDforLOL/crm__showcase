@@ -1,7 +1,67 @@
-{#<p class="price">${{ product.price }}</p>#}
-{##}
-{#<form action="{% url "cart:cart_add" product.product_id %}" method="post">#}
-{#  {{ cart_product_form }}#}
-{#  {% csrf_token %}#}
-{#  <input type="submit" value="Add to cart">#}
-{#</form>#}
+{% load static %}
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <a href="#" data-dismiss="modal" class="class pull-right"><span
+                    class="glyphicon glyphicon-remove"></span></a>
+            <head>
+
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+
+                <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+                      rel="stylesheet">
+                <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+            </head>
+
+            <body>
+
+            <div class="container">
+                <div class="card">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4 center">
+
+
+                                    <img src="{% static 'media/og_stock_phone.png' %}">
+
+                            </div>
+                            <div class="col-sm-6 offset-md-3">
+                                <h3 class="product-title">{{ i.product_name }}</h3>
+                                <div class="rating">
+                                    <div class="stars">
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <span class="review-no">0 reviews</span>
+                                </div>
+                                <p class="product-description">{% lorem %}</p>
+
+                                <form class="form-row"
+                                      action="{% url "cart:cart_add" product_id=i.product_id %}"
+                                      method="post">
+                                    <h3 class="price">current price: <span>${{ i.price }}</span></h3>
+                                    {{ cart_product_form.quantity }}
+                                    {% csrf_token %}
+
+                                    <input class="btn" type="submit" value="Add to cart"
+                                           style="background-color: #427EE3; color:white; padding-left: 10px; margin-left: 15px ">
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </body>
+            </html>
+
+
+        </div>
+    </div>
+</div>

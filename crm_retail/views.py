@@ -1,4 +1,3 @@
-from django.core.exceptions import FieldDoesNotExist
 import logging
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpRequest
@@ -7,10 +6,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
+from products_shopping_cart.cart import Cart
 from .models import *
 from .forms import SalesForm, CreateUserForm, CustomerForm
 from .filters import SalesFilter
 from .decorators import unauthorized_user, allowed_users, admin_only
+
 logging.basicConfig(handlers=[logging.FileHandler('example.log', 'w', 'utf-8')])
 
 
@@ -19,7 +20,6 @@ logging.basicConfig(handlers=[logging.FileHandler('example.log', 'w', 'utf-8')])
 @admin_only
 def home(request: HttpRequest) -> HttpResponse:
     sales = Sales.objects.all()
-
     return render(
         request,
         'crm_retail/dashboard.html',
@@ -27,7 +27,8 @@ def home(request: HttpRequest) -> HttpResponse:
          'customers': Customers.objects.all(),
          'total_orders': sales.count(),
          'orders_delivered': sales.filter(status='Delivered').count(),
-         'orders_pending': sales.filter(status='Pending').count()
+         'orders_pending': sales.filter(status='Pending').count(),
+         'total_cart': [sum(i['quantity'] for i in Cart(request).cart.values())][0]
          }
     )
 
@@ -37,8 +38,7 @@ def register_page(request: HttpRequest) -> HttpResponse:
     errors_txt = ''
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
-        # TODO Create Logger
-        print(form.errors)
+        logging.error(form.errors)
         errors_txt = form.errors
 
         if form.is_valid():
@@ -48,8 +48,10 @@ def register_page(request: HttpRequest) -> HttpResponse:
             user.groups.add(group)
             Customers.objects.create(
                 customer_id=get_id(Customers, 'customer_id'),
-                user=user, first_name=user.first_name,
-                last_name=user.last_name, mail=user.email,
+                user=user,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                mail=user.email,
             )
             messages.success(request, f'Account was created for {username}')
             return redirect('login')
@@ -85,6 +87,10 @@ def logout_page(request: HttpRequest) -> HttpResponse:
 @allowed_users(allowed_roles=['customer'])
 def customer_profile(request: HttpRequest) -> HttpResponse:
     user_customer_orders = request.user.customers.sales_set.all()
+    current_customer_sale_detail = {}
+    for sale in user_customer_orders:
+        current_customer_sale_detail.update({sale: SaleDetails.objects.all().filter(sale_id=sale)})
+
     logging.info(f'ORDERS: {user_customer_orders}')
     return render(request,
                   'crm_retail/customer_profile.html',
@@ -92,7 +98,10 @@ def customer_profile(request: HttpRequest) -> HttpResponse:
                    'orders_pending': user_customer_orders.filter(status='Pending').count(),
                    'orders_delivering': user_customer_orders.filter(status='Out for delivery').count(),
                    'orders_delivered': user_customer_orders.filter(status='Delivered').count(),
-                   })
+                   'current_customer_sale_detail': current_customer_sale_detail,
+                   'total_cart': [sum(i['quantity'] for i in Cart(request).cart.values())][0]
+                   }
+                  )
 
 
 @login_required(login_url='login')
@@ -104,7 +113,11 @@ def profile_setting(request: HttpRequest) -> HttpResponse:
             form.save()
     else:
         form = CustomerForm(instance=request.user.customers)
-    return render(request, 'crm_retail/profile_settings.html', {'form': form})
+    return render(request, 'crm_retail/profile_settings.html',
+                  {
+                      'form': form,
+                      'total_cart': [sum(i['quantity'] for i in Cart(request).cart.values())][0]
+                  })
 
 
 @login_required(login_url='login')
@@ -139,9 +152,8 @@ def create_sale(request: HttpRequest, customer_id: str) -> HttpResponse:
     sales_form.fields['customer_id'].disabled = True
 
     sale_details_form_set = modelformset_factory(
-        SaleDetails, fields=('product', 'quantity'),
-        can_delete=True, extra=1, max_num=10
-    )
+        SaleDetails, fields=('product', 'quantity'), can_delete=True, extra=1, max_num=10)
+
     sale_detail_form_set = sale_details_form_set(queryset=SaleDetails.objects.none())
 
     if request.method == 'POST':
@@ -181,9 +193,8 @@ def update_sale(request: HttpRequest, sale_id: str) -> HttpResponse:
         SaleDetails, fields=('product', 'quantity'), can_delete=True, extra=1, max_num=10)
 
     sale_detail_form_set = sale_details_form_set(
-        initial=[{'sale_id': sale_id, 'sale_detail': sale_detail_id.sale_detail}
-                 for sale_detail_id in sale_details_id], queryset=sale_details_id
-    )
+        initial=[{'sale_id': sale_id, 'sale_detail': sale_detail_id.sale_detail} for sale_detail_id in sale_details_id],
+        queryset=sale_details_id)
 
     if request.method == 'POST':
         sales_form = SalesForm(request.POST, instance=sale)
@@ -224,11 +235,6 @@ def delete_sale(request: HttpRequest, sale_id: str) -> HttpResponse:
 
 
 def get_id(model: models, table: str) -> str:
-    """
-    model = what model to query
-    table = Tables Name
-    return 1 if none is in DB or latest if populated
-    """
     try:
         latest_id_or_1 = (getattr(model.objects.latest(f'{table}'), 'pk') + 1)
         logging.info(f'{model} 1 was added to ID')
@@ -242,4 +248,3 @@ def get_id(model: models, table: str) -> str:
 
     except Exception as e:
         logging.error(e.message)
-

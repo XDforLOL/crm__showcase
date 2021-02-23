@@ -1,39 +1,43 @@
-
 {% extends 'crm_retail/main.html' %}
 {% load static %}
 
 {% block content %}
-<main>
-    <div class="album bg-light">
-        <div class="container ">
-            <div class=" row">
-                <div class="row center">
-                    {% for i in products %}
-                    <div class="col-4 p-4">
-                        <div class="card shadow-sm">
-                            <img src="{% static 'media/og_stock_phone.png' %}">
-                            <div class="card-body">
-                                <p class="card-text">
-                                    {{i.product_name}}</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div class="btn-group">
-                                        <p class="price">{{ product.price }}</p>
-                                        <form action="{% url "cart:cart_add" product_id=i.product_id %}" method="post">
-                                            {{ cart_product_form }}
-                                            {% csrf_token %}
-                                            <input type="submit" value="Add to cart">
-                                        </form>
+    <main>
+        <div class="album bg-light">
+            <div class="container ">
+                <div class=" row">
+                        {% for i in products %}
+                            <div class="col-4 p-4">
+                                <div class="card shadow-sm">
+                                    <img class="card-img-top" src="{% static 'media/og_stock_phone.png' %}" alt="Card image cap">
+
+                                    <div class="card-body w-35">
+                                        <p class="card-text">{{ i.product_name }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="btn-group">
+                                                <p class="price"> {{ product.price }} </p>
+                                                <form class="form" style="display: inline;"
+                                                      action="{% url "cart:cart_add" product_id=i.product_id %}"
+                                                      method="post">
+                                                    {% csrf_token %}
+                                                    <div style="float: left">{{ cart_product_form.quantity }}</div>
+                                                    <input class="btn" type="submit" value="Add to cart"
+                                                           style="background-color: #427EE3; color:white;">
+                                                </form>
+                                                <div class="text h5" style="padding: 15px">${{ i.price }}</div>
+                                                <a class="btn" data-toggle="modal" data-target="#exampleModal">
+                                                    <span style="display:inline-block;margin-right:10px;"> View Product</span>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <small class="text-muted h5">${{i.price}}</small>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {% endfor %}
+                            {% include 'shopping_cart/products/product_detail.html' %}
+                        {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+
 {% endblock %}

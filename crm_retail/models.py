@@ -1,9 +1,5 @@
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth.models import User
-from django.db.models.query import QuerySet
-from django.conf import settings
-# Create your models here.
 from products_shopping_cart.models import Products
 
 
@@ -57,4 +53,3 @@ class SaleDetails(models.Model):
         return f"sale: {str(self.sale)},product: {str(self.product)}," \
                f"quantity: {str(self.quantity)},created_on: {str(self.created_on)}"
 
-    # , self.product, self.quantity, self.created_on

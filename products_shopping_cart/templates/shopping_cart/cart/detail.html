@@ -4,9 +4,12 @@
 
 
 {% block content %}
+    <div class="container-fluid">
+    <div class="row">
+    <div class="col">
 <div class="card">
     <div class="card-header">Your shopping cart</div>
-    <div class="row">
+    <div class="row-md-1">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
             <table class="table table-hover">
                 <thead>
@@ -66,12 +69,9 @@
                         </td>
                         <td>
                             <form action="{% url 'cart:checkout' %}" method="post">
-                                <input type="submit" value="Checkout">
+                                <input class="btn btn-success" type="submit" value="Checkout">
                                 {% csrf_token %}
                             </form>
-                        <a method="post" type="button" class="btn btn-success" href="{% url "cart:checkout" %}">Checkout
-                            <span class="glyphicon glyphicon-play"></span>
-                        </a>
                         </td>
                     </tr>
                 </tbody>
@@ -79,4 +79,7 @@
         </div>
     </div>
 </div>
+    </div>
+    </div>
+    </div>
 {% endblock %}
