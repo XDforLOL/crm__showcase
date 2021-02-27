@@ -13,14 +13,19 @@
         </div>
         </div>
         <div class="col">
-            <div class="card card-body">
+            <label class="card card-body">
 
                 <form method="POST" action="" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <input class="btn btn-primary" type="submit" name="Update
-                    Information">
+                    <div class="col">
+                    <label class="form-inline"><span>First name:&nbsp;</span>{{ form.first_name }}<span>&nbsp; Last name:&nbsp; </span> {{ form.last_name }}</label>
+                        </div>
+                    <div class="col">
+                    <label class="form-inline">Phone Number:&nbsp;{{ form.phone_number }}&nbsp; Mail:&nbsp;{{ form.mail }}</label>
+                    </div>
+                    <input class="btn btn-primary" type="submit" name="Update Information">
                 </form>
+            </label>
             </div>
         </div>
 
@@ -29,3 +34,4 @@
 <br>
 </div>
 {% endblock %}
+

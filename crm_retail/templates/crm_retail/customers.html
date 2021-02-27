@@ -36,34 +36,29 @@
     </div>
     <br>
     <div class="row">
-        <div class="col">
-            <div class="card card-body">
-                <form method="get">
-                    <button class="btn btn-primary" type="submit">
-                        Search
+
+        <div class="card card-body">
+
+            <form class="row g-4">
+                <div class="col-auto">
+                    <label for="OrderID1" class="visually-hidden">Order ID #</label>
+                    <div type="input" class="" id="OrderID1">{{ my_filter.form.sale_id }}</div>
+                </div>
+                <div class="col-auto">
+                    <label for="timeOfOrder" class="visually-hidden">Time Of Order</label>
+                    <div type="input" class="" id="timeOfOrder">{{ my_filter.form.time_of_order }}</div>
+                </div>
+                <div class="col-auto">
+                    <label for="status1" class="visually-hidden">Status</label>
+                    <div type="input" class="" id="status1">{{ my_filter.form.status }}</div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary" style="  position: absolute;bottom: 10px;height: 35px">Search
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col">
-            <div class="card card-body">
-                <form class="form-inline" method="get">
-                    <label for="{{ my_filter.form.sale_id }}" class="sr-only">Order ID #</label>
-                    <input type="password" class="form-control" id="{{ my_filter.form.sale_id }}"
-                           placeholder="Order number">
-                    <label for="{{ my_filter.form.time_of_order }}" class="sr-only">Time of order:</label>
-                    <input type="password" class="form-control" id="{{ my_filter.form.time_of_order }}" placeholder="Time of order/date">
 
-                    <label for="{{ my_filter.form.status }}" class="sr-only">Status</label>
-                    <input class="form-control" id="{{ my_filter.form.status }}">
-
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
     </div>
     <br>
     <div class="row">
@@ -114,16 +109,18 @@
     </div>
     </div>
 
-        <style>
+    <style>
 
-#total-orders{
-    background-color: #427EE3
-    }
-#orders-pending{
-    background-color: #75961d
-    }
-#orders-delivered{
-    background-color: #E65139
-    }
+        #total-orders {
+            background-color: #427EE3
+        }
+
+        #orders-pending {
+            background-color: #75961d
+        }
+
+        #orders-delivered {
+            background-color: #E65139
+        }
     </style>
 {% endblock %}

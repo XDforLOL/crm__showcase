@@ -8,7 +8,7 @@
     <div class="row">
     <div class="col">
 <div class="card">
-    <div class="card-header">Your shopping cart</div>
+    <div class="card-header top-0 start-50 translate-middle" ><h3>Your shopping cart</h3></div>
     <div class="row-md-1">
         <div class="col-sm-12 col-md-10 col-md-offset-1">
             <table class="table table-hover">
@@ -31,7 +31,7 @@
                             <div class="media-body">
                                 <h4 class="media-heading" style="padding-left: 10px; clear: both;display: inline-block;overflow: hidden;white-space: nowrap;"><a>{{product.product_name}}</a></h4>
                                 <h5 class="media-heading" style="padding-left: 10px; clear: both;display: inline-block;overflow: hidden;white-space: nowrap;"> by<a href="#">{{ product.maker }}</a></h5>
-                                <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                                <div><span>Status: </span><span class="text-success"><strong>In Stock</strong></span></div>
                             </div>
                         </div>
                         </td>
@@ -47,7 +47,7 @@
                         <td class="col-sm-1 col-md-1 text-center"><strong>${{ item.total_price }}</strong></td>
                         <td class="col-sm-1 col-md-1">
                         <button type="button" class="btn btn-danger">
-                            <span class="glyphicon glyphicon-remove"></span> Remove
+                            <span class="glyphicon glyphicon-remove" style="background-color: #E36B59"></span> Remove
                         </button>
                         </td>
                     </tr>
@@ -65,11 +65,11 @@
                         <td>   </td>
                         <td>   </td>
                         <td>
-                        <a class="btn btn-primary" style="clear: both;display: inline-block;overflow: hidden;white-space: nowrap;" type="button" href="{% url "cart:products" %}" class="button light">Continue shopping</a>
+                        <a class="btn btn-primary" style="clear: both;display: inline-block;overflow: hidden;white-space: nowrap;" type="button" href="{% url "cart:products" %}" style="background-color: #427EE3" class="button light">Continue shopping</a>
                         </td>
                         <td>
                             <form action="{% url 'cart:checkout' %}" method="post">
-                                <input class="btn btn-success" type="submit" value="Checkout">
+                                <input class="btn btn-success" type="submit" value="Checkout" style="background-color: #75961d">
                                 {% csrf_token %}
                             </form>
                         </td>
