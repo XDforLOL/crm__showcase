@@ -1,4 +1,4 @@
-## A-digit CRM and Ecommerce web application App
+## A-digit Dynamic CRM and Ecommerce web application
 This is  an independent project created to showcase CRM and Ecommerce 
 
 ## Description
@@ -9,11 +9,18 @@ In this App the business can create orders, search the orders that were created,
 While the customer has the options; to place orders with a functional shopping cart, get updated at what stage the order is and look at order history.
 
 
+
 ## Features
 - Admin has CRM features
 - User can browse the product catalog and add to Shopping cart 
-- Users also can checkout and place Orders 
-- Admin can monitor edit user orders if needed 
+- Admin can monitor edit user orders if needed
+- Users also can checkout and place Orders with a Shopping cart
+
+<img src="https://github.com/XDforLOL/crm__showcase/blob/shoping_cart/read_me_screenshots/shopping_cart.png?raw=true" width="650" height="420">
+
+- An overview of user orders
+
+<img src="https://github.com/XDforLOL/crm__showcase/blob/shoping_cart/read_me_screenshots/customer_dashboard.png?raw=true" width="650" height="420">
 
 ## Technologies Used
     - Python 3.8
