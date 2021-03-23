@@ -2,7 +2,6 @@ import psycopg2
 import os
 from .models import Products
 from datetime import datetime
-from django_retail_crm.secret_key import host, psql_key
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpRequest
 from crm_retail.views import get_id
