@@ -1,4 +1,5 @@
 import psycopg2
+import os
 from .models import Products
 from datetime import datetime
 from django_retail_crm.secret_key import host, psql_key
@@ -60,10 +61,11 @@ def products_detail(request) -> HttpResponse:
 def check_out(request: HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         conn = psycopg2.connect(
-            host=host,
-            database="retaildb",
-            user="postgres",
-            password=psql_key)
+            host=os.getenv('DB_HOST'),
+            database=os.getenv('DB_NAME'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_SECRET')
+        )
         cur = conn.cursor()
 
         sale_id = get_id(Sales, 'sale_id')
